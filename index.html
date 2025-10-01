@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnxietyAid - Interactive Anxiety Management</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Emergency Support Button -->
+    <div class="emergency-button" id="emergency-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Emergency
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div class="screen active" id="dashboard-screen">
+        <div class="container">
+            <header class="dashboard-header">
+                <h1>Your AnxietyAid Dashboard</h1>
+                <div class="user-welcome">
+                    <p>Welcome back! Here's how you're doing today.</p>
+                </div>
+            </header>
+
+            <!-- Dashboard Navigation -->
+            <nav class="dashboard-nav">
+                <button class="nav-tab active" data-section="activities">📋 Activities</button>
+                <button class="nav-tab" data-section="analytics">📊 Analytics</button>
+                <button class="nav-tab" data-section="resources">🛡️ Resources</button>
+                <button class="nav-tab" data-section="therapeutic">🧘 Therapeutic Activities</button>
+            </nav>
+
+            <!-- Activities Section -->
+            <div class="dashboard-section active" id="activities-section">
+                <div class="section-header">
+                    <h2>Your Activities</h2>
+                </div>
+                
+                <div class="activity-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="activities-completed">3</div>
+                        <div class="stat-label">Activities Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="streak-counter">5</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avg-effectiveness">8.2</div>
+                        <div class="stat-label">Avg Effectiveness</div>
+                    </div>
+                </div>
+
+                <div class="recent-activities-container">
+                    <h3>Recent Activities</h3>
+                    <div class="recent-activities" id="recent-activities-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="recommended-activities">
+                    <h3>Recommended for Today</h3>
+                    <div class="activity-recommendations">
+                        <button class="activity-card" onclick="startBreathingExercise()">
+                            <div class="activity-icon">🫁</div>
+                            <div class="activity-info">
+                                <div class="activity-name">Breathing Exercise</div>
+                                <div class="activity-duration">5 minutes</div>
+                            </div>
+                        </button>
+                        <button class="activity-card" onclick="startThoughtRecord()">
+                            <div class="activity-icon">🧠</div>
+                            <div class="activity-info">
+                                <div class="activity-name">Thought Challenge</div>
+                                <div class="activity-duration">10 minutes</div>
+                            </div>
+                        </button>
+                        <button class="activity-card" onclick="startGroundingExercise()">
+                            <div class="activity-icon">🎯</div>
+                            <div class="activity-info">
+                                <div class="activity-name">Grounding Exercise</div>
+                                <div class="activity-duration">8 minutes</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="dashboard-section" id="analytics-section">
+                <div class="section-header">
+                    <h2>Your Analytics</h2>
+                </div>
+
+                <div class="analytics-charts">
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <h3>Anxiety Levels Over Time</h3>
+                        <canvas id="anxiety-trend-chart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <h3>Most Common Triggers</h3>
+                        <canvas id="triggers-chart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <h3>Coping Strategy Effectiveness</h3>
+                        <canvas id="effectiveness-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="insights-panel">
+                    <h3>Your Insights</h3>
+                    <div class="insight-cards" id="insights-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources Section -->
+            <div class="dashboard-section" id="resources-section">
+                <div class="section-header">
+                    <h2>Support Resources</h2>
+                </div>
+
+                <div class="emergency-resources">
+                    <h3>🚨 Emergency Support</h3>
+                    <div class="emergency-grid">
+                        <button class="emergency-card" onclick="callCrisisLine('988')">
+                            <div class="emergency-icon">📞</div>
+                            <div class="emergency-info">
+                                <div class="emergency-name">Crisis Hotline</div>
+                                <div class="emergency-number">988</div>
+                            </div>
+                        </button>
+                        <button class="emergency-card" onclick="startEmergencyGrounding()">
+                            <div class="emergency-icon">🧘</div>
+                            <div class="emergency-info">
+                                <div class="emergency-name">Emergency Grounding</div>
+                                <div class="emergency-duration">2 minutes</div>
+                            </div>
+                        </button>
+                        <button class="emergency-card" onclick="showSafetyPlan()">
+                            <div class="emergency-icon">🛡️</div>
+                            <div class="emergency-info">
+                                <div class="emergency-name">Safety Plan</div>
+                                <div class="emergency-duration">View Plan</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="educational-resources">
+                    <h3>📚 Learn More</h3>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link" target="_blank">Understanding Anxiety Disorders</a>
+                        <a href="#" class="resource-link" target="_blank">Coping with Uncertainty</a>
+                        <a href="#" class="resource-link" target="_blank">Building Resilience Skills</a>
+                        <a href="#" class="resource-link" target="_blank">When to Seek Professional Help</a>
+                    </div>
+                </div>
+
+                <div class="professional-help">
+                    <h3>🏥 Professional Support</h3>
+                    <div class="help-options">
+                        <div class="help-card">
+                            <h4>Find a Therapist</h4>
+                            <p>Connect with licensed mental health professionals in your area</p>
+                            <button class="btn btn--secondary">Search Therapists</button>
+                        </div>
+                        <div class="help-card">
+                            <h4>Online Therapy</h4>
+                            <p>Access professional help from the comfort of your home</p>
+                            <button class="btn btn--secondary">Explore Options</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Therapeutic Activities Section -->
+            <div class="dashboard-section" id="therapeutic-section">
+                <div class="section-header">
+                    <h2>Interactive Therapeutic Activities</h2>
+                    <p>Engage with fully interactive exercises designed to help manage anxiety</p>
+                </div>
+
+                <div class="therapeutic-activities">
+                    <div class="therapeutic-card">
+                        <div class="therapeutic-header">
+                            <h3>🫁 Advanced Breathing Exercise</h3>
+                            <span class="difficulty-badge">Beginner</span>
+                        </div>
+                        <p>Interactive breathing guide with animated circle and customizable duration</p>
+                        <button class="btn btn--primary" onclick="startAdvancedBreathing()">Start Exercise</button>
+                    </div>
+
+                    <div class="therapeutic-card">
+                        <div class="therapeutic-header">
+                            <h3>🧠 Interactive Thought Record</h3>
+                            <span class="difficulty-badge">Intermediate</span>
+                        </div>
+                        <p>Step-by-step cognitive restructuring with guided prompts and progress tracking</p>
+                        <button class="btn btn--primary" onclick="startInteractiveThoughtRecord()">Start Exercise</button>
+                    </div>
+
+                    <div class="therapeutic-card">
+                        <div class="therapeutic-header">
+                            <h3>🎯 Interactive Grounding</h3>
+                            <span class="difficulty-badge">Beginner</span>
+                        </div>
+                        <p>5-4-3-2-1 technique with interactive checklist and progress feedback</p>
+                        <button class="btn btn--primary" onclick="startInteractiveGrounding()">Start Exercise</button>
+                    </div>
+
+                    <div class="therapeutic-card">
+                        <div class="therapeutic-header">
+                            <h3>⚖️ Decision Maker Tool</h3>
+                            <span class="difficulty-badge">Advanced</span>
+                        </div>
+                        <p>Multi-step decision wizard with pros/cons analysis and weighted scoring</p>
+                        <button class="btn btn--primary" onclick="startDecisionMaker()">Start Exercise</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Breathing Exercise Modal -->
+    <div class="modal hidden" id="breathing-modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Advanced Breathing Exercise</h3>
+                <button class="modal-close" onclick="closeModal('breathing-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="breathing-container">
+                    <div class="breathing-circle" id="breathing-circle">
+                        <div class="breathing-text" id="breathing-text">Get Ready...</div>
+                    </div>
+                    <div class="breathing-controls">
+                        <div class="breathing-settings">
+                            <label>Duration: 
+                                <select id="breathing-duration">
+                                    <option value="60">1 minute</option>
+                                    <option value="300" selected>5 minutes</option>
+                                    <option value="600">10 minutes</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="breathing-buttons">
+                            <button class="btn btn--primary" id="start-breathing-btn">Start Session</button>
+                            <button class="btn btn--outline" id="stop-breathing-btn">Stop</button>
+                        </div>
+                    </div>
+                    <div class="breathing-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="breathing-progress-fill"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span id="breathing-time-left">5:00</span> remaining
+                        </div>
+                    </div>
+                    <div class="breathing-rating" id="breathing-rating" style="display: none;">
+                        <h4>How effective was this exercise?</h4>
+                        <div class="rating-buttons">
+                            <button class="rating-btn" data-rating="1">1</button>
+                            <button class="rating-btn" data-rating="2">2</button>
+                            <button class="rating-btn" data-rating="3">3</button>
+                            <button class="rating-btn" data-rating="4">4</button>
+                            <button class="rating-btn" data-rating="5">5</button>
+                            <button class="rating-btn" data-rating="6">6</button>
+                            <button class="rating-btn" data-rating="7">7</button>
+                            <button class="rating-btn" data-rating="8">8</button>
+                            <button class="rating-btn" data-rating="9">9</button>
+                            <button class="rating-btn" data-rating="10">10</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Thought Record Modal -->
+    <div class="modal hidden" id="thought-record-modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Interactive Thought Record</h3>
+                <button class="modal-close" onclick="closeModal('thought-record-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="thought-record-progress">
+                    <div class="step-indicator">
+                        <div class="step active" data-step="1">1</div>
+                        <div class="step" data-step="2">2</div>
+                        <div class="step" data-step="3">3</div>
+                        <div class="step" data-step="4">4</div>
+                        <div class="step" data-step="5">5</div>
+                    </div>
+                </div>
+                <div class="thought-record-container">
+                    <div class="thought-step active" data-step="1">
+                        <h3>Step 1: Identify the Situation</h3>
+                        <p>Describe what happened that triggered your anxiety or distress.</p>
+                        <textarea id="situation-input" placeholder="What specific situation made you feel anxious? Include when, where, and who was involved..."></textarea>
+                        <button class="btn btn--primary step-next" onclick="nextThoughtStep(2)">Next Step</button>
+                    </div>
+                    <div class="thought-step" data-step="2">
+                        <h3>Step 2: Identify Your Thoughts</h3>
+                        <p>What thoughts went through your mind during this situation?</p>
+                        <textarea id="thoughts-input" placeholder="What were you thinking? What assumptions did you make? What worried you most?"></textarea>
+                        <div class="step-navigation">
+                            <button class="btn btn--outline" onclick="prevThoughtStep(1)">Previous</button>
+                            <button class="btn btn--primary step-next" onclick="nextThoughtStep(3)">Next Step</button>
+                        </div>
+                    </div>
+                    <div class="thought-step" data-step="3">
+                        <h3>Step 3: Rate Your Feelings</h3>
+                        <p>How intense were your emotions? Use the slider to indicate your anxiety level.</p>
+                        <div class="anxiety-rating-container">
+                            <label>Anxiety Level:</label>
+                            <input type="range" id="anxiety-rating-slider" min="1" max="10" value="5">
+                            <div class="anxiety-labels">
+                                <span>1 - Calm</span>
+                                <span id="current-anxiety-rating">5</span>
+                                <span>10 - Panic</span>
+                            </div>
+                        </div>
+                        <div class="step-navigation">
+                            <button class="btn btn--outline" onclick="prevThoughtStep(2)">Previous</button>
+                            <button class="btn btn--primary step-next" onclick="nextThoughtStep(4)">Next Step</button>
+                        </div>
+                    </div>
+                    <div class="thought-step" data-step="4">
+                        <h3>Step 4: Challenge Your Thoughts</h3>
+                        <p>Let's examine the evidence for and against your thoughts.</p>
+                        <div class="evidence-container">
+                            <div class="evidence-section">
+                                <h4>Evidence FOR this thought:</h4>
+                                <textarea id="evidence-for" placeholder="What facts support this thought?"></textarea>
+                            </div>
+                            <div class="evidence-section">
+                                <h4>Evidence AGAINST this thought:</h4>
+                                <textarea id="evidence-against" placeholder="What facts contradict this thought?"></textarea>
+                            </div>
+                        </div>
+                        <div class="step-navigation">
+                            <button class="btn btn--outline" onclick="prevThoughtStep(3)">Previous</button>
+                            <button class="btn btn--primary step-next" onclick="nextThoughtStep(5)">Next Step</button>
+                        </div>
+                    </div>
+                    <div class="thought-step" data-step="5">
+                        <h3>Step 5: Create a Balanced Thought</h3>
+                        <p>Based on the evidence, create a more balanced and realistic thought.</p>
+                        <textarea id="balanced-thought" placeholder="What's a more balanced way to think about this situation?"></textarea>
+                        <div class="completion-actions">
+                            <button class="btn btn--outline" onclick="prevThoughtStep(4)">Previous</button>
+                            <button class="btn btn--primary" onclick="completeThoughtRecord()">Complete Exercise</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Grounding Exercise Modal -->
+    <div class="modal hidden" id="grounding-modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Interactive 5-4-3-2-1 Grounding Exercise</h3>
+                <button class="modal-close" onclick="closeModal('grounding-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="grounding-container">
+                    <div class="grounding-intro">
+                        <p>This grounding technique helps bring you back to the present moment by engaging your five senses.</p>
+                        <button class="btn btn--primary" id="start-grounding-btn">Begin Exercise</button>
+                    </div>
+                    <div class="grounding-exercise" id="grounding-exercise" style="display: none;">
+                        <div class="grounding-step active" data-step="see">
+                            <h3>👁️ Look Around: Find 5 Things You Can See</h3>
+                            <p>Take your time and really notice each item in detail.</p>
+                            <div class="grounding-checklist">
+                                <div class="checklist-item">
+                                    <input type="checkbox" id="see-1">
+                                    <label for="see-1">Thing 1 you can see</label>
+                                </div>
+                                <div class="checklist-item">
+                                    <input type="checkbox" id="see-2">
+                                    <label for="see-2">Thing 2 you can see</label>
+                                </div>
+                                <div class="checklist-item">
+                                    <input type="checkbox" id="see-3">
+                                    <label for="see-3">Thing 3 you can see</label>
+                                </div>
+                                <div class="checklist-item">
+                                    <input type="checkbox" id="see-4">
+                                    <label for="see-4">Thing 4 you can see</label>
+                                </div>
+                                <div class="checklist-item">
+                                    <input type="checkbox" id="see-5">
+                                    <label for="see-5">Thing 5 you can see</label>
+                                </div>
+                            </div>
+                            <button class="btn btn--primary grounding-continue" onclick="nextGroundingStep('touch')">Continue</button>
+                        </div>
+                        <!-- Additional grounding steps will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decision Maker Modal -->
+    <div class="modal hidden" id="decision-modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Interactive Decision Maker</h3>
+                <button class="modal-close" onclick="closeModal('decision-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="decision-container">
+                    <div class="decision-step active" data-step="1">
+                        <h3>What Decision Are You Facing?</h3>
+                        <input type="text" id="decision-title" placeholder="Describe the decision you need to make..." class="form-control">
+                        <button class="btn btn--primary" onclick="nextDecisionStep(2)">Continue</button>
+                    </div>
+                    <div class="decision-step" data-step="2" style="display: none;">
+                        <h3>What Are Your Options?</h3>
+                        <div class="options-container">
+                            <div class="option-input-container">
+                                <input type="text" class="option-input form-control" placeholder="Option 1">
+                                <input type="text" class="option-input form-control" placeholder="Option 2">
+                            </div>
+                            <button class="btn btn--outline" id="add-option-btn">+ Add Another Option</button>
+                        </div>
+                        <div class="step-navigation">
+                            <button class="btn btn--outline" onclick="prevDecisionStep(1)">Previous</button>
+                            <button class="btn btn--primary" onclick="nextDecisionStep(3)">Continue</button>
+                        </div>
+                    </div>
+                    <div class="decision-step" data-step="3" style="display: none;">
+                        <h3>Pros and Cons Analysis</h3>
+                        <div class="pros-cons-container">
+                            <div class="pros-section">
+                                <h4>Pros</h4>
+                                <div class="pros-list" id="pros-list"></div>
+                                <div class="add-item-container">
+                                    <input type="text" id="pro-input" placeholder="Add a positive aspect..." class="form-control">
+                                    <button class="btn btn--outline" onclick="addPro()">Add Pro</button>
+                                </div>
+                            </div>
+                            <div class="cons-section">
+                                <h4>Cons</h4>
+                                <div class="cons-list" id="cons-list"></div>
+                                <div class="add-item-container">
+                                    <input type="text" id="con-input" placeholder="Add a negative aspect..." class="form-control">
+                                    <button class="btn btn--outline" onclick="addCon()">Add Con</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-navigation">
+                            <button class="btn btn--outline" onclick="prevDecisionStep(2)">Previous</button>
+                            <button class="btn btn--primary" onclick="completeDecisionMaking()">Get Recommendation</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Modal -->
+    <div class="modal hidden" id="emergency-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🚨 Emergency Support</h3>
+                <button class="modal-close" onclick="closeModal('emergency-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="crisis-resources">
+                    <h4>Immediate Help</h4>
+                    <div class="crisis-contact">
+                        <div class="contact-item">
+                            <strong>Crisis Text Line</strong><br>
+                            <span class="contact-number">Text HOME to 741741</span>
+                            <p>24/7 crisis support via text</p>
+                        </div>
+                        <div class="contact-item">
+                            <strong>National Suicide Prevention Lifeline</strong><br>
+                            <span class="contact-number">988</span>
+                            <p>24/7 free and confidential support</p>
+                        </div>
+                        <div class="contact-item">
+                            <strong>SAMHSA National Helpline</strong><br>
+                            <span class="contact-number">1-800-662-4357</span>
+                            <p>Treatment referral service</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="emergency-grounding">
+                    <h4>Quick Grounding</h4>
+                    <p>If you're feeling overwhelmed, try this quick exercise:</p>
+                    <button class="btn btn--primary btn--full-width" onclick="startEmergencyGrounding()">Start 2-Minute Grounding</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
